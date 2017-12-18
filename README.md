@@ -29,7 +29,7 @@ Various settings may be configured externally by modifying parameters in **confi
 
 ## Usage
 ```
-java -jar target/dhcs-loader-1.0.jar file=<path-to-input-file>
+java -jar dhcs-loader-1.0.jar file=<path-to-input-file>
 ```
 
 ## Database

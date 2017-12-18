@@ -139,7 +139,7 @@ public class TreatmentFacilityLoaderJobConfiguration {
   @Bean
   public ItemReader<TreatmentFacility> removedTreatmentFacilityItemReader() {
     JdbcCursorItemReader reader = new JdbcCursorItemReader<>();
-    reader.setSql("SELECT tf.* FROM TREATMENT_FACILITIES tf LEFT JOIN TREATMENT_FACILITIES_TEMP tft ON tfl.RECORD_ID = tf.RECORD_ID and tft.PROGRAM_NAME = tf.PROGRAM_NAME and tft.ADDRESS_STREET1 = tf.ADDRESS_STREET1 WHERE tft.RECORD_ID IS NULL and tft.PROGRAM_NAME is NULL and tft.ADDRESS_STREET1 is NULL");
+    reader.setSql("SELECT tf.* FROM TREATMENT_FACILITIES tf LEFT JOIN TREATMENT_FACILITIES_TEMP tft ON tft.RECORD_ID = tf.RECORD_ID and tft.PROGRAM_NAME = tf.PROGRAM_NAME and tft.ADDRESS_STREET1 = tf.ADDRESS_STREET1 WHERE tft.RECORD_ID IS NULL and tft.PROGRAM_NAME is NULL and tft.ADDRESS_STREET1 is NULL");
     reader.setRowMapper(new TreatmentFacilityRowMapper());
     reader.setDataSource(dataSource);
     return reader;

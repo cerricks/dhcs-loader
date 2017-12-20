@@ -139,7 +139,7 @@ public class TreatmentFacilityLoaderJobConfiguration {
   @Bean
   public ItemReader<TreatmentFacility> removedTreatmentFacilityItemReader() {
     JdbcCursorItemReader reader = new JdbcCursorItemReader<>();
-    reader.setSql("SELECT tf.* FROM TREATMENT_FACILITIES tf LEFT JOIN TREATMENT_FACILITIES_TEMP tft ON tft.RECORD_ID = tf.RECORD_ID and tft.PROGRAM_NAME = tf.PROGRAM_NAME and tft.ADDRESS_STREET1 = tf.ADDRESS_STREET1 WHERE tft.RECORD_ID IS NULL and tft.PROGRAM_NAME is NULL and tft.ADDRESS_STREET1 is NULL");
+    reader.setSql("select tf.* from treatment_facilities tf left join treatment_facilities_temp tft on tft.record_id = tf.record_id and tft.program_name = tf.program_name and tft.address_street1 = tf.address_street1 where tft.record_id is null and tft.program_name is null and tft.address_street1 is null");
     reader.setRowMapper(new TreatmentFacilityRowMapper());
     reader.setDataSource(dataSource);
     return reader;
@@ -153,7 +153,7 @@ public class TreatmentFacilityLoaderJobConfiguration {
   @Bean
   public ItemReader<TreatmentFacility> tempTreatmentFacilityReader() {
     JdbcCursorItemReader reader = new JdbcCursorItemReader<>();
-    reader.setSql("SELECT * FROM TREATMENT_FACILITIES_TEMP ORDER BY RECORD_ID, PROGRAM_NAME, ADDRESS_STREET1");
+    reader.setSql("select * from treatment_facilities_temp order by record_id, program_name, address_street1");
     reader.setRowMapper(new TreatmentFacilityRowMapper());
     reader.setDataSource(dataSource);
     return reader;
@@ -168,8 +168,8 @@ public class TreatmentFacilityLoaderJobConfiguration {
   public ItemWriter<TreatmentFacility> tempTreatmentFacilityWriter() {
     JdbcBatchItemWriter<TreatmentFacility> writer = new JdbcBatchItemWriter<>();
     writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-    writer.setSql("INSERT INTO TREATMENT_FACILITIES_TEMP (RECORD_ID, PROGRAM_NAME, LEGAL_NAME, ADDRESS_STREET1, ADDRESS_STREET2, ADDRESS_CITY, ADDRESS_STATE, ADDRESS_ZIP, PHONE, FAX, SERVICE_TYPE, TARGET_POPULATION, RESIDENT_CAPACITY, TOTAL_OCCUPANCY, IMS, EXPIRATION_DATE) "
-            + "VALUES (:recordId, :programName, :legalName, :street1, :street2, :city, :state, :zip, :phone, :fax, :serviceType, :targetPopulation, :residentCapacity, :totalOccupancy, :ims, :expirationDate)");
+    writer.setSql("insert into treatment_facilities_temp (record_id, program_name, legal_name, address_street1, address_street2, address_city, address_state, address_zip, phone, fax, service_type, target_population, resident_capacity, total_occupancy, ims, expiration_date) "
+            + "values (:recordId, :programName, :legalName, :street1, :street2, :city, :state, :zip, :phone, :fax, :serviceType, :targetPopulation, :residentCapacity, :totalOccupancy, :ims, :expirationDate)");
     writer.setDataSource(dataSource);
     return writer;
   }
@@ -186,15 +186,15 @@ public class TreatmentFacilityLoaderJobConfiguration {
 
     JdbcBatchItemWriter<TreatmentFacility> addedTreatmentFacilityItemWriter = new JdbcBatchItemWriter<>();
     addedTreatmentFacilityItemWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-    addedTreatmentFacilityItemWriter.setSql("INSERT INTO TREATMENT_FACILITIES (RECORD_ID, PROGRAM_NAME, LEGAL_NAME, ADDRESS_STREET1, ADDRESS_STREET2, ADDRESS_CITY, ADDRESS_STATE, ADDRESS_ZIP, PHONE, FAX, SERVICE_TYPE, TARGET_POPULATION, RESIDENT_CAPACITY, TOTAL_OCCUPANCY, IMS, EXPIRATION_DATE) "
-            + "VALUES (:recordId, :programName, :legalName, :street1, :street2, :city, :state, :zip, :phone, :fax, :serviceType, :targetPopulation, :residentCapacity, :totalOccupancy, :ims, :expirationDate)");
+    addedTreatmentFacilityItemWriter.setSql("insert into treatment_facilities (record_id, program_name, legal_name, address_street1, address_street2, address_city, address_state, address_zip, phone, fax, service_type, target_population, resident_capacity, total_occupancy, ims, expiration_date) "
+            + "values (:recordId, :programName, :legalName, :street1, :street2, :city, :state, :zip, :phone, :fax, :serviceType, :targetPopulation, :residentCapacity, :totalOccupancy, :ims, :expirationDate)");
     addedTreatmentFacilityItemWriter.setDataSource(dataSource);
     addedTreatmentFacilityItemWriter.afterPropertiesSet();
 
     JdbcBatchItemWriter<TreatmentFacility> addedTreatmentFacilityItemLogger = new JdbcBatchItemWriter<>();
     addedTreatmentFacilityItemLogger.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-    addedTreatmentFacilityItemLogger.setSql("INSERT INTO TREATMENT_FACILITIES_LOG (TRANS_TYPE, RECORD_ID, PROGRAM_NAME, LEGAL_NAME, ADDRESS_STREET1, ADDRESS_STREET2, ADDRESS_CITY, ADDRESS_STATE, ADDRESS_ZIP, PHONE, FAX, SERVICE_TYPE, TARGET_POPULATION, RESIDENT_CAPACITY, TOTAL_OCCUPANCY, IMS, EXPIRATION_DATE) "
-            + "VALUES ('ADDED', :recordId, :programName, :legalName, :street1, :street2, :city, :state, :zip, :phone, :fax, :serviceType, :targetPopulation, :residentCapacity, :totalOccupancy, :ims, :expirationDate)");
+    addedTreatmentFacilityItemLogger.setSql("insert into treatment_facilities_log (trans_type, record_id, program_name, legal_name, address_street1, address_street2, address_city, address_state, address_zip, phone, fax, service_type, target_population, resident_capacity, total_occupancy, ims, expiration_date) "
+            + "values ('ADDED', :recordId, :programName, :legalName, :street1, :street2, :city, :state, :zip, :phone, :fax, :serviceType, :targetPopulation, :residentCapacity, :totalOccupancy, :ims, :expirationDate)");
     addedTreatmentFacilityItemLogger.setDataSource(dataSource);
     addedTreatmentFacilityItemLogger.afterPropertiesSet();
 
@@ -203,7 +203,7 @@ public class TreatmentFacilityLoaderJobConfiguration {
 
     JdbcBatchItemWriter<TreatmentFacility> updatedTreatmentFacilityItemWriter = new JdbcBatchItemWriter<>();
     updatedTreatmentFacilityItemWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-    updatedTreatmentFacilityItemWriter.setSql("UPDATE TREATMENT_FACILITIES SET RECORD_ID=:recordId, PROGRAM_NAME=:programName, LEGAL_NAME=:legalName, ADDRESS_STREET1=:street1, ADDRESS_STREET2=:street2, ADDRESS_CITY=:city, ADDRESS_STATE=:state, ADDRESS_ZIP=:zip, PHONE=:phone, FAX=:fax, SERVICE_TYPE=:serviceType, TARGET_POPULATION=:targetPopulation, RESIDENT_CAPACITY=:residentCapacity, TOTAL_OCCUPANCY=:totalOccupancy, IMS=:ims, EXPIRATION_DATE=:expirationDate WHERE RECORD_ID=:recordId and PROGRAM_NAME=:programName and ADDRESS_STREET1=:street1");
+    updatedTreatmentFacilityItemWriter.setSql("update treatment_facilities set record_id=:recordId, program_name=:programName, legal_name=:legalName, address_street1=:street1, address_street2=:street2, address_city=:city, address_state=:state, address_zip=:zip, phone=:phone, fax=:fax, service_type=:serviceType, target_population=:targetPopulation, resident_capacity=:residentCapacity, total_occupancy=:totalOccupancy, ims=:ims, expiration_date=:expirationDate where record_id=:recordId and program_name=:programName and address_street1=:street1");
     updatedTreatmentFacilityItemWriter.setDataSource(dataSource);
     updatedTreatmentFacilityItemWriter.afterPropertiesSet();
 
@@ -229,14 +229,14 @@ public class TreatmentFacilityLoaderJobConfiguration {
   public ItemWriter<TreatmentFacility> removedTreatmentFacilityItemWriter() {
     JdbcBatchItemWriter<TreatmentFacility> deleteItemWriter = new JdbcBatchItemWriter<>();
     deleteItemWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-    deleteItemWriter.setSql("DELETE FROM TREATMENT_FACILITIES WHERE RECORD_ID = :recordId and PROGRAM_NAME = :programName and ADDRESS_STREET1 = :street1");
+    deleteItemWriter.setSql("delete from treatment_facilities where record_id=:recordId and program_name=:programName and address_street1=:street1");
     deleteItemWriter.setDataSource(dataSource);
     deleteItemWriter.afterPropertiesSet();
 
     JdbcBatchItemWriter<TreatmentFacility> deleteItemLogger = new JdbcBatchItemWriter<>();
     deleteItemLogger.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-    deleteItemLogger.setSql("INSERT INTO TREATMENT_FACILITIES_LOG (TRANS_TYPE, RECORD_ID, PROGRAM_NAME, LEGAL_NAME, ADDRESS_STREET1, ADDRESS_STREET2, ADDRESS_CITY, ADDRESS_STATE, ADDRESS_ZIP, PHONE, FAX, SERVICE_TYPE, TARGET_POPULATION, RESIDENT_CAPACITY, TOTAL_OCCUPANCY, IMS, EXPIRATION_DATE) "
-            + "VALUES ('REMOVED', :recordId, :programName, :legalName, :street1, :street2, :city, :state, :zip, :phone, :fax, :serviceType, :targetPopulation, :residentCapacity, :totalOccupancy, :ims, :expirationDate)");
+    deleteItemLogger.setSql("insert into treatment_facilities_log (trans_type, record_id, program_name, legal_name, address_street1, address_street2, address_city, address_state, address_zip, phone, fax, service_type, target_population, resident_capacity, total_occupancy, ims, expiration_date) "
+            + "values ('REMOVED', :recordId, :programName, :legalName, :street1, :street2, :city, :state, :zip, :phone, :fax, :serviceType, :targetPopulation, :residentCapacity, :totalOccupancy, :ims, :expirationDate)");
     deleteItemLogger.setDataSource(dataSource);
     deleteItemLogger.afterPropertiesSet();
 

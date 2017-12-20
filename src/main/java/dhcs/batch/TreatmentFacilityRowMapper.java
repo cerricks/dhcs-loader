@@ -39,22 +39,22 @@ public class TreatmentFacilityRowMapper implements RowMapper<TreatmentFacility> 
   @Override
   public TreatmentFacility mapRow(final ResultSet rs, final int rowNum) throws SQLException {
     TreatmentFacility treatmentFacility = new TreatmentFacility();
-    treatmentFacility.setRecordId(rs.getString("RECORD_ID"));
-    treatmentFacility.setProgramName(rs.getString("PROGRAM_NAME"));
-    treatmentFacility.setLegalName(rs.getString("LEGAL_NAME"));
-    treatmentFacility.setStreet1(rs.getString("ADDRESS_STREET1"));
-    treatmentFacility.setStreet2(rs.getString("ADDRESS_STREET2"));
-    treatmentFacility.setCity(rs.getString("ADDRESS_CITY"));
-    treatmentFacility.setState(rs.getString("ADDRESS_STATE"));
-    treatmentFacility.setZip(rs.getString("ADDRESS_ZIP"));
-    treatmentFacility.setPhone(rs.getString("PHONE"));
-    treatmentFacility.setFax(rs.getString("FAX"));
-    treatmentFacility.setServiceType(rs.getString("SERVICE_TYPE"));
-    treatmentFacility.setTargetPopulation(rs.getString("TARGET_POPULATION"));
-    treatmentFacility.setResidentCapacity(rs.getInt("RESIDENT_CAPACITY"));
-    treatmentFacility.setTotalOccupancy(rs.getInt("TOTAL_OCCUPANCY"));
-    treatmentFacility.setExpirationDate(rs.getString("EXPIRATION_DATE"));
-    treatmentFacility.setIms(rs.getString("IMS"));
+    treatmentFacility.setRecordId(rs.getString("record_id"));
+    treatmentFacility.setProgramName(rs.getString("program_name"));
+    treatmentFacility.setLegalName(rs.getString("legal_name"));
+    treatmentFacility.setStreet1(rs.getString("address_street1"));
+    treatmentFacility.setStreet2(rs.getString("address_street2"));
+    treatmentFacility.setCity(rs.getString("address_city"));
+    treatmentFacility.setState(rs.getString("address_state"));
+    treatmentFacility.setZip(rs.getString("address_zip"));
+    treatmentFacility.setPhone(rs.getString("phone"));
+    treatmentFacility.setFax(rs.getString("fax"));
+    treatmentFacility.setServiceType(rs.getString("service_type"));
+    treatmentFacility.setTargetPopulation(rs.getString("target_population"));
+    treatmentFacility.setResidentCapacity(rs.getInt("resident_capacity"));
+    treatmentFacility.setTotalOccupancy(rs.getInt("total_occupancy"));
+    treatmentFacility.setExpirationDate(rs.getString("expiration_date"));
+    treatmentFacility.setIms(rs.getString("ims"));
 
     return treatmentFacility;
   }

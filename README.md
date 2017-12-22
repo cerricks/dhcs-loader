@@ -26,6 +26,10 @@ Various settings may be configured externally by modifying parameters in **confi
 | logging.file | The name/path of the external log file |
 | treatmentFacility.item.regex | A regular expression pattern used to match a single record |
 | treatmentFacility.item.propertyNames | A list of group names matched in **treatmentFacility.item.regex** |
+| titleCase.name.lowerCaseExceptions | A comma separated list of words in a name to convert to lower case |
+| titleCase.name.upperCaseExceptions | A comma separated list of words in a name to convert to upper case |
+| titleCase.address.lowerCaseExceptions | A comma separated list of words in an address to convert to lower case |
+| titleCase.address.upperCaseExceptions | A comma separated list of words in an address to convert to upper case |
 
 ## Usage
 ```

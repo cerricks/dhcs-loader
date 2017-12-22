@@ -70,6 +70,18 @@ public class TreatmentFacilityLoaderJobConfiguration {
   @Value(value = "${treatmentFacility.item.propertyNames}")
   private String[] propertyNames;
 
+  @Value(value = "${titleCase.name.lowerCaseExceptions}")
+  private String[] nameLowerCaseExceptions;
+
+  @Value(value = "${titleCase.name.upperCaseExceptions}")
+  private String[] nameUpperCaseExceptions;
+
+  @Value(value = "${titleCase.address.lowerCaseExceptions}")
+  private String[] addressLowerCaseExceptions;
+
+  @Value(value = "${titleCase.address.upperCaseExceptions}")
+  private String[] addressUpperCaseExceptions;
+
   @Autowired
   private JobBuilderFactory jobBuilderFactory;
 
@@ -112,6 +124,23 @@ public class TreatmentFacilityLoaderJobConfiguration {
     reader.setFieldSetMapper(fieldSetMapper);
 
     return reader;
+  }
+
+  /**
+   * Configures the {@link TreatmentFacilityFormatProcessor} to be used to
+   * process {@link TreatmentFacility} items.
+   *
+   * @return the configured {@link ItemProcessor}.
+   */
+  @Bean
+  public ItemProcessor<TreatmentFacility, TreatmentFacility> treatmentFacilityFormatProcessor() {
+    TreatmentFacilityFormatProcessor processor = new TreatmentFacilityFormatProcessor();
+    processor.setAddressLowerCaseExceptions(addressLowerCaseExceptions);
+    processor.setAddressUpperCaseExceptions(addressUpperCaseExceptions);
+    processor.setNameLowerCaseExceptions(nameLowerCaseExceptions);
+    processor.setNameUpperCaseExceptions(nameUpperCaseExceptions);
+
+    return processor;
   }
 
   /**
@@ -301,6 +330,7 @@ public class TreatmentFacilityLoaderJobConfiguration {
     return stepBuilderFactory.get("loadToTemp")
             .<TreatmentFacility, TreatmentFacility>chunk(100)
             .reader(treatmentFacilityPdfReportReader(null)) // actual value will be injected (not null)
+            .processor(treatmentFacilityFormatProcessor())
             .writer(tempTreatmentFacilityWriter())
             .build();
   }

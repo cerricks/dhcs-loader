@@ -4,7 +4,7 @@
     
   <groupId>com.github.cerricks</groupId>
   <artifactId>dhcs-loader</artifactId>
-  <version>1.1</version>
+  <version>1.2</version>
   <packaging>jar</packaging>
     
   <parent>
@@ -49,6 +49,7 @@
   </licenses>
     
   <properties>
+    <commons.lang.version>2.6</commons.lang.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -68,6 +69,11 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>${commons.lang.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
@@ -144,5 +150,6 @@
       </plugin>
     </plugins>
   </reporting>
-    
+    <description>A utility for loading DHCS report data.</description>
+    <name>DHCS Loader</name>
 </project>

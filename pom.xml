@@ -4,7 +4,7 @@
     
   <groupId>com.github.cerricks</groupId>
   <artifactId>dhcs-loader</artifactId>
-  <version>1.2</version>
+  <version>1.3</version>
   <packaging>jar</packaging>
     
   <parent>

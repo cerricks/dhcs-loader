@@ -23,10 +23,16 @@
  */
 package dhcs.batch;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.util.Assert;
 
 /**
  * Listens for job start and end and logs notification messages.
@@ -34,22 +40,52 @@ import org.springframework.batch.core.listener.JobExecutionListenerSupport;
  * @author Clifford Errickson
  * @since 1.0
  */
-public class JobStatusNotificationListener extends JobExecutionListenerSupport {
+public class JobStatusNotificationListener extends JobExecutionListenerSupport implements InitializingBean {
 
-  private static final Logger logger = LoggerFactory.getLogger(JobStatusNotificationListener.class);
+  private static final Logger LOG = LoggerFactory.getLogger(JobStatusNotificationListener.class);
+
+  private NamedParameterJdbcTemplate jdbcTemplate;
+
+  public JobStatusNotificationListener() {
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    Assert.notNull(jdbcTemplate, "jdbcTemplate must be set");
+  }
+
+  public void setJdbcTemplate(final NamedParameterJdbcTemplate jdbcTemplate) {
+    this.jdbcTemplate = jdbcTemplate;
+  }
 
   @Override
   public void beforeJob(final JobExecution jobExecution) {
-    if (logger.isInfoEnabled()) {
-      logger.info("Job [" + jobExecution.getJobInstance().getJobName() + "] started with ID [" + jobExecution.getId() + "]");
+    if (LOG.isInfoEnabled()) {
+      LOG.info("Job [" + jobExecution.getJobInstance().getJobName() + "] started with ID [" + jobExecution.getId() + "]");
     }
   }
 
   @Override
   public void afterJob(final JobExecution jobExecution) {
-    if (logger.isInfoEnabled()) {
-      logger.info("Job [" + jobExecution.getJobInstance().getJobName() + "] finished with status [" + jobExecution.getStatus() + "]");
-      logger.info("Check logs for additional information");
+    if (LOG.isInfoEnabled()) {
+      LOG.info("Job [" + jobExecution.getJobInstance().getJobName() + "] finished with status [" + jobExecution.getStatus() + "]");
+
+      switch (jobExecution.getStatus()) {
+        case COMPLETED:
+          Map<String, Object> params = new HashMap<>();
+          params.put("jobExecutionId", jobExecution.getId());
+
+          int totalCount = jdbcTemplate.queryForObject("select count(*) from treatment_facilities", Collections.emptyMap(), Integer.class);
+          int addCount = jdbcTemplate.queryForObject("select count(*) from treatment_facilities_log where trans_type='ADDED' and job_execution_id=:jobExecutionId", params, Integer.class);
+          int removedCount = jdbcTemplate.queryForObject("select count(*) from treatment_facilities_log where trans_type='REMOVED' and job_execution_id=:jobExecutionId", params, Integer.class);
+
+          LOG.info("Results: total records processed = " + totalCount + ", new records = " + addCount + ", removed records = " + removedCount);
+
+          break;
+
+        default:
+          LOG.info("Check logs for additional information");
+      }
     }
   }
 

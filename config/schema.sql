@@ -3,7 +3,7 @@ drop table if exists treatment_facilities_temp;
 drop table if exists treatment_facilities_log;
 
 CREATE TABLE treatment_facilities (
-  id int NOT NULL AUTO_INCREMENT,
+  id BIGINT NOT NULL AUTO_INCREMENT,
   record_id varchar(255) NOT NULL,
   program_name varchar(255) NOT NULL,
   legal_name varchar(255) DEFAULT NULL,
@@ -25,6 +25,7 @@ CREATE TABLE treatment_facilities (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE treatment_facilities_temp (
+  id BIGINT NOT NULL AUTO_INCREMENT,
   record_id varchar(255) DEFAULT NULL,
   program_name varchar(255) DEFAULT NULL,
   legal_name varchar(255) DEFAULT NULL,
@@ -40,10 +41,13 @@ CREATE TABLE treatment_facilities_temp (
   resident_capacity int(11) DEFAULT NULL,
   total_occupancy int(11) DEFAULT NULL,
   expiration_date varchar(255),
-  ims varchar(255) DEFAULT NULL
+  ims varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE treatment_facilities_log (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  job_execution_id BIGINT NOT NULL,
   trans_type varchar(255) DEFAULT NULL,
   record_id varchar(255) DEFAULT NULL,
   program_name varchar(255) DEFAULT NULL,
@@ -60,6 +64,7 @@ CREATE TABLE treatment_facilities_log (
   resident_capacity int(11) DEFAULT NULL,
   total_occupancy int(11) DEFAULT NULL,
   expiration_date varchar(255),
-  ims varchar(255) DEFAULT NULL
+  ims varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -101,7 +101,10 @@ public class TreatmentFacilityLoaderJobConfiguration {
    */
   @Bean
   public JobStatusNotificationListener jobStatusCompletionListener() {
-    return new JobStatusNotificationListener();
+    JobStatusNotificationListener jobStatusNotificationListener = new JobStatusNotificationListener();
+    jobStatusNotificationListener.setJdbcTemplate(jdbcTemplate);
+
+    return jobStatusNotificationListener;
   }
 
   /**
@@ -206,10 +209,12 @@ public class TreatmentFacilityLoaderJobConfiguration {
   /**
    * Writes {@link TreatmentFacility} items to main storage.
    *
+   * @param jobId the job id
    * @return the {@link ItemWriter}.
    */
   @Bean
-  public ItemWriter<TreatmentFacility> treatmentFacilityItemWriter() {
+  @StepScope
+  public ItemWriter<TreatmentFacility> treatmentFacilityItemWriter(@Value("#{stepExecution.jobExecution.jobId}") Long jobId) {
     BackToBackPatternClassifier classifier = new BackToBackPatternClassifier();
     classifier.setRouterDelegate(new TreatmentFacilityExistsClassifier());
 
@@ -222,8 +227,8 @@ public class TreatmentFacilityLoaderJobConfiguration {
 
     JdbcBatchItemWriter<TreatmentFacility> addedTreatmentFacilityItemLogger = new JdbcBatchItemWriter<>();
     addedTreatmentFacilityItemLogger.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-    addedTreatmentFacilityItemLogger.setSql("insert into treatment_facilities_log (trans_type, record_id, program_name, legal_name, address_street1, address_street2, address_city, address_state, address_zip, phone, fax, service_type, target_population, resident_capacity, total_occupancy, ims, expiration_date) "
-            + "values ('ADDED', :recordId, :programName, :legalName, :street1, :street2, :city, :state, :zip, :phone, :fax, :serviceType, :targetPopulation, :residentCapacity, :totalOccupancy, :ims, :expirationDate)");
+    addedTreatmentFacilityItemLogger.setSql("insert into treatment_facilities_log (job_execution_id, trans_type, record_id, program_name, legal_name, address_street1, address_street2, address_city, address_state, address_zip, phone, fax, service_type, target_population, resident_capacity, total_occupancy, ims, expiration_date) "
+            + "values (" + jobId + ", 'ADDED', :recordId, :programName, :legalName, :street1, :street2, :city, :state, :zip, :phone, :fax, :serviceType, :targetPopulation, :residentCapacity, :totalOccupancy, :ims, :expirationDate)");
     addedTreatmentFacilityItemLogger.setDataSource(dataSource);
     addedTreatmentFacilityItemLogger.afterPropertiesSet();
 
@@ -252,10 +257,12 @@ public class TreatmentFacilityLoaderJobConfiguration {
    * Configure the {@link ItemWriter} to remove {@link TreatmentFacility} items
    * from main storage and log activity.
    *
+   * @param jobId the job id
    * @return the configured {@link ItemWriter}.
    */
   @Bean
-  public ItemWriter<TreatmentFacility> removedTreatmentFacilityItemWriter() {
+  @StepScope
+  public ItemWriter<TreatmentFacility> removedTreatmentFacilityItemWriter(@Value("#{stepExecution.jobExecution.jobId}") Long jobId) {
     JdbcBatchItemWriter<TreatmentFacility> deleteItemWriter = new JdbcBatchItemWriter<>();
     deleteItemWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
     deleteItemWriter.setSql("delete from treatment_facilities where record_id=:recordId and program_name=:programName and address_street1=:street1");
@@ -264,8 +271,8 @@ public class TreatmentFacilityLoaderJobConfiguration {
 
     JdbcBatchItemWriter<TreatmentFacility> deleteItemLogger = new JdbcBatchItemWriter<>();
     deleteItemLogger.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-    deleteItemLogger.setSql("insert into treatment_facilities_log (trans_type, record_id, program_name, legal_name, address_street1, address_street2, address_city, address_state, address_zip, phone, fax, service_type, target_population, resident_capacity, total_occupancy, ims, expiration_date) "
-            + "values ('REMOVED', :recordId, :programName, :legalName, :street1, :street2, :city, :state, :zip, :phone, :fax, :serviceType, :targetPopulation, :residentCapacity, :totalOccupancy, :ims, :expirationDate)");
+    deleteItemLogger.setSql("insert into treatment_facilities_log (job_execution_id, trans_type, record_id, program_name, legal_name, address_street1, address_street2, address_city, address_state, address_zip, phone, fax, service_type, target_population, resident_capacity, total_occupancy, ims, expiration_date) "
+            + "values (" + jobId + ", 'REMOVED', :recordId, :programName, :legalName, :street1, :street2, :city, :state, :zip, :phone, :fax, :serviceType, :targetPopulation, :residentCapacity, :totalOccupancy, :ims, :expirationDate)");
     deleteItemLogger.setDataSource(dataSource);
     deleteItemLogger.afterPropertiesSet();
 
@@ -283,7 +290,6 @@ public class TreatmentFacilityLoaderJobConfiguration {
 
     List<String> deleteSql = new ArrayList();
     deleteSql.add("delete from treatment_facilities_temp");
-    deleteSql.add("delete from treatment_facilities_log");
 
     tasklet.setDeleteSql(deleteSql);
 
@@ -347,7 +353,7 @@ public class TreatmentFacilityLoaderJobConfiguration {
             .<TreatmentFacility, TreatmentFacility>chunk(100)
             .reader(tempTreatmentFacilityReader())
             .processor(treatmentFacilityIdProcessor())
-            .writer(treatmentFacilityItemWriter())
+            .writer(treatmentFacilityItemWriter(null)) // actual value will be injected (not null)
             .build();
   }
 
@@ -362,7 +368,7 @@ public class TreatmentFacilityLoaderJobConfiguration {
     return stepBuilderFactory.get("processRemoved")
             .<TreatmentFacility, TreatmentFacility>chunk(100)
             .reader(removedTreatmentFacilityItemReader())
-            .writer(removedTreatmentFacilityItemWriter())
+            .writer(removedTreatmentFacilityItemWriter(null)) // actual value will be injected (not null)
             .build();
   }
 
